@@ -40,7 +40,7 @@ try:
         QProgressBar, QInputDialog
     )
     from PyQt5.QtCore import Qt, pyqtSignal, QThread, QTimer, QRect
-    from PyQt5.QtGui import QFont, QIcon, QColor, QTextCursor, QSyntaxHighlighter
+    from PyQt5.QtGui import QFont, QIcon, QColor, QTextCursor, QSyntaxHighlighter, QTextCharFormat
     from PyQt5 import QtCore
 except ImportError:
     print("Error: PyQt5 is required. Install with: pip install PyQt5")
@@ -52,10 +52,17 @@ except ImportError:
     print("Error: pywin32 is required. Install with: pip install pywin32")
     sys.exit(1)
 
-from SAP import (
-    sap_sess_attach, sap_sess_create, sap_win_exists, sap_win_close,
-    sap_obj_select, sap_obj_value_set, sap_obj_value_get, SAPException
-)
+try:
+    from .SAP import (
+        sap_sess_attach, sap_sess_create, sap_win_exists, sap_win_close,
+        sap_obj_select, sap_obj_value_set, sap_obj_value_get, SAPException
+    )
+except ImportError:
+    # Fallback for direct script execution
+    from SAP import (
+        sap_sess_attach, sap_sess_create, sap_win_exists, sap_win_close,
+        sap_obj_select, sap_obj_value_set, sap_obj_value_get, SAPException
+    )
 
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
@@ -109,10 +116,10 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         Returns:
             Configured QTextCharFormat object.
         """
-        fmt = QtCore.QTextCharFormat()
+        fmt = QTextCharFormat()
         fmt.setForeground(QColor(color))
         if bold:
-            fmt.setFontWeight(QtCore.QFont.Bold)
+            fmt.setFontWeight(QFont.Bold)
         if italic:
             fmt.setFontItalic(True)
         return fmt
